@@ -15,6 +15,25 @@ This server provides one tool:
         -   `folder` (string, optional): The absolute path to the directory where the image should be saved. If not provided, the image will be saved in the same directory where the server script (`index.js`) is located.
     -   **Output:** A text message indicating the path where the image was successfully generated, or an error message if generation failed.
 
+## Demo
+
+Here's an example of generating a simple flowchart:
+
+**Mermaid Code:**
+
+```mermaid
+graph TD
+    A[Start] --> B{Is it Friday?};
+    B -- Yes --> C[Good!];
+    B -- No --> D[Wait...];
+    C --> E[End];
+    D --> E;
+```
+
+**Generated Image (`docs/demo.png`):**
+
+![Demo Flowchart](docs/demo.png)
+
 ## Prerequisites
 
 -   **Node.js and npm:** Required to install dependencies and run the server.
