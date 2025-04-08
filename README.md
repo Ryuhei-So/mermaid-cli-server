@@ -21,7 +21,7 @@ Here's an example of generating a simple flowchart:
 
 **Mermaid Code:**
 
-```mermaid
+```
 graph TD
     A[Start] --> B{Is it Friday?};
     B -- Yes --> C[Good!];
