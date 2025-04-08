@@ -1,70 +1,78 @@
-# mermaid-cli-mcp-server MCP Server
+# Mermaid CLI MCP Server
 
-A Model Context Protocol server
-
-This is a TypeScript-based MCP server that implements a simple notes system. It demonstrates core MCP concepts by providing:
-
-- Resources representing text notes with URIs and metadata
-- Tools for creating new notes
-- Prompts for generating summaries of notes
+A Model Context Protocol (MCP) server that generates PNG images from Mermaid markdown code using the official `@mermaid-js/mermaid-cli`.
 
 ## Features
 
-### Resources
-- List and access notes via `note://` URIs
-- Each note has a title, content and metadata
-- Plain text mime type for simple content access
+This server provides one tool:
 
 ### Tools
-- `create_note` - Create new text notes
-  - Takes title and content as required parameters
-  - Stores note in server state
 
-### Prompts
-- `summarize_notes` - Generate a summary of all stored notes
-  - Includes all note contents as embedded resources
-  - Returns structured prompt for LLM summarization
+-   **`generate_image`**: Generates a PNG image from Mermaid markdown.
+    -   **Input Parameters:**
+        -   `code` (string, required): The Mermaid markdown code to render.
+        -   `name` (string, required): The base name for the output PNG file (without the `.png` extension).
+        -   `folder` (string, optional): The absolute path to the directory where the image should be saved. If not provided, the image will be saved in the same directory where the server script (`index.js`) is located.
+    -   **Output:** A text message indicating the path where the image was successfully generated, or an error message if generation failed.
 
-## Development
+## Prerequisites
 
-Install dependencies:
-```bash
-npm install
-```
-
-Build the server:
-```bash
-npm run build
-```
-
-For development with auto-rebuild:
-```bash
-npm run watch
-```
+-   **Node.js and npm:** Required to install dependencies and run the server.
+-   **Puppeteer-compatible Browser:** `@mermaid-js/mermaid-cli` uses Puppeteer internally, which requires a compatible browser installation (like Chrome, Chromium, or Chrome for Testing). The server needs the path to the browser executable.
 
 ## Installation
 
-To use with Claude Desktop, add the server config:
+1.  **Clone the repository (if you haven't already):**
+    ```bash
+    git clone https://github.com/Ryuhei-So/mermaid-cli-server.git
+    cd mermaid-cli-server
+    ```
 
-On MacOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
-On Windows: `%APPDATA%/Claude/claude_desktop_config.json`
+2.  **Install dependencies:**
+    ```bash
+    npm install
+    ```
+
+3.  **Build the server:**
+    ```bash
+    npm run build
+    ```
+    This compiles the TypeScript code into JavaScript in the `build` directory.
+
+## Configuration
+
+This server requires the path to a Puppeteer-compatible browser executable. You need to set the `PUPPETEER_EXECUTABLE_PATH` environment variable when configuring this server in your MCP client (e.g., Cursor, Claude Desktop).
+
+**Example MCP Client Configuration (`coolcline_mcp_settings.json` or similar):**
 
 ```json
 {
   "mcpServers": {
-    "mermaid-cli-mcp-server": {
-      "command": "/path/to/mermaid-cli-mcp-server/build/index.js"
+    "mermaid-cli": { // Choose a name for the server instance
+      "command": "node", // Or the direct path to node if needed
+      "args": ["/path/to/mermaid-cli-server/build/index.js"], // Absolute path to the built server script
+      "env": {
+        "PUPPETEER_EXECUTABLE_PATH": "/path/to/your/chrome/executable" // IMPORTANT: Set the correct absolute path to your Chrome/Chromium executable
+      },
+      "disabled": false,
+      "alwaysAllow": []
     }
+    // ... other server configurations
   }
 }
 ```
 
-### Debugging
+**Finding the Browser Path:**
 
-Since MCP servers communicate over stdio, debugging can be challenging. We recommend using the [MCP Inspector](https://github.com/modelcontextprotocol/inspector), which is available as a package script:
+-   **macOS (Chrome for Testing example):** `/Users/your_user/.cache/puppeteer/chrome/mac-XXX.X.XXXX.XX/chrome-mac-x64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing` (Replace `your_user` and version number)
+-   **macOS (Standard Chrome):** `/Applications/Google Chrome.app/Contents/MacOS/Google Chrome`
+-   **Windows:** Might be something like `C:\Program Files\Google\Chrome\Application\chrome.exe`
+-   **Linux:** Might be `/usr/bin/google-chrome` or similar.
 
-```bash
-npm run inspector
-```
+You might need to install Chrome for Testing specifically if Puppeteer requires it: `npx @puppeteer/browsers install chrome@stable`
 
-The Inspector will provide a URL to access debugging tools in your browser.
+## Development
+
+-   **Build:** `npm run build` (Compiles TypeScript)
+-   **Watch Mode:** `npm run watch` (Automatically recompiles on changes)
+-   **MCP Inspector:** `npm run inspector` (Runs the server with a debugging interface)
