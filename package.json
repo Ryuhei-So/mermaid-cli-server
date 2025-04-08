@@ -1,0 +1,29 @@
+{
+  "name": "mermaid-cli-mcp-server",
+  "version": "0.1.0",
+  "description": "A Model Context Protocol server",
+  "private": true,
+  "type": "module",
+  "bin": {
+    "mermaid-cli-mcp-server": "./build/index.js"
+  },
+  "files": [
+    "build"
+  ],
+  "scripts": {
+    "build": "tsc && node -e \"require('fs').chmodSync('build/index.js', '755')\"",
+    "prepare": "npm run build",
+    "watch": "tsc --watch",
+    "inspector": "npx @modelcontextprotocol/inspector build/index.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "0.6.0",
+    "execa": "^9.5.2",
+    "uuid": "^11.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.24",
+    "@types/uuid": "^10.0.0",
+    "typescript": "^5.3.3"
+  }
+}
